@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { SlackUserProfile, TranscriptMessage } from "../types.js";
 
 export const extractionResultSchema = z.object({
   client_confirmed: z.boolean(),
@@ -87,3 +88,28 @@ Rules:
 - amount is in major units (5000 means 5000.00, not cents).
 - If missing_fields is non-empty, write exactly one clarifying_question and set ready_for_draft false.
 - ready_for_draft is true only when missing_fields is empty, client_confirmed is true, every line item has a positive amount, and currency is a 3-letter code.`;
+
+export type ExtractionInput = {
+  transcript: TranscriptMessage[];
+  requester: SlackUserProfile;
+  client: SlackUserProfile | null;
+  defaultCurrency?: string;
+};
+
+export function buildUserPrompt(input: ExtractionInput): string {
+  const lines = input.transcript.map((message) => {
+    const who = `${message.displayName} (${message.userId}, ${message.role})`;
+    return `${who}: ${message.text}`;
+  });
+
+  return [
+    `Requester: ${input.requester.displayName} (${input.requester.userId})`,
+    input.client
+      ? `Client (from Slack tag): ${input.client.displayName} (${input.client.userId})${input.client.email ? ` email=${input.client.email}` : " (no Slack email)"}`
+      : "Client (from Slack tag): unknown — missing_fields must include client",
+    `defaultCurrency: ${input.defaultCurrency ?? "unset"}`,
+    "",
+    "Transcript:",
+    lines.join("\n") || "(empty)",
+  ].join("\n");
+}

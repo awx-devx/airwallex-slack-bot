@@ -38,8 +38,11 @@ const rawSchema = z.object({
   AIRWALLEX_DAYS_UNTIL_DUE: z.string().optional(),
   AIRWALLEX_LOGIN_AS: z.string().optional(),
   AIRWALLEX_SELLER_NAME: z.string().optional(),
-  OPENAI_API_KEY: z.string().min(1),
+  LLM_PROVIDER: z.enum(["openai", "anthropic"]).optional(),
+  OPENAI_API_KEY: z.string().optional(),
   OPENAI_MODEL: z.string().optional(),
+  ANTHROPIC_API_KEY: z.string().optional(),
+  ANTHROPIC_MODEL: z.string().optional(),
   EMAIL_ENABLED: z.enum(["true", "false"]).optional(),
   RESEND_API_KEY: z.string().optional(),
   EMAIL_FROM: z.string().optional(),
@@ -65,10 +68,9 @@ export type AppConfig = {
     loginAs?: string;
     sellerName?: string;
   };
-  openai: {
-    apiKey: string;
-    model: string;
-  };
+  llm:
+    | { provider: "openai"; apiKey: string; model: string }
+    | { provider: "anthropic"; apiKey: string; model: string };
   email: {
     enabled: boolean;
     resendApiKey?: string;
@@ -105,6 +107,8 @@ function parseConfig(): AppConfig {
     throw new Error("AIRWALLEX_DAYS_UNTIL_DUE must be >= 0");
   }
 
+  const llm = parseLlm(env);
+
   return {
     slack: {
       botToken: env.SLACK_BOT_TOKEN,
@@ -123,10 +127,7 @@ function parseConfig(): AppConfig {
       loginAs: env.AIRWALLEX_LOGIN_AS,
       sellerName: env.AIRWALLEX_SELLER_NAME,
     },
-    openai: {
-      apiKey: env.OPENAI_API_KEY,
-      model: env.OPENAI_MODEL || "gpt-4o-mini",
-    },
+    llm,
     email: {
       enabled: emailEnabled,
       resendApiKey: env.RESEND_API_KEY,
@@ -134,6 +135,33 @@ function parseConfig(): AppConfig {
     },
     customerMapPath: env.CUSTOMER_MAP_PATH || "./data/customer-map.json",
     logLevel: (env.LOG_LEVEL || "info").toLowerCase(),
+  };
+}
+
+function parseLlm(
+  env: z.infer<typeof rawSchema>,
+): AppConfig["llm"] {
+  const provider = env.LLM_PROVIDER ?? "openai";
+  if (provider === "anthropic") {
+    const apiKey = env.ANTHROPIC_API_KEY?.trim();
+    if (!apiKey) {
+      throw new Error("LLM_PROVIDER=anthropic requires ANTHROPIC_API_KEY");
+    }
+    return {
+      provider: "anthropic",
+      apiKey,
+      model: env.ANTHROPIC_MODEL?.trim() || "claude-sonnet-4-5",
+    };
+  }
+
+  const apiKey = env.OPENAI_API_KEY?.trim();
+  if (!apiKey) {
+    throw new Error("LLM_PROVIDER=openai requires OPENAI_API_KEY");
+  }
+  return {
+    provider: "openai",
+    apiKey,
+    model: env.OPENAI_MODEL?.trim() || "gpt-4o-mini",
   };
 }
 

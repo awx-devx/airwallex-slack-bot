@@ -21,6 +21,7 @@ src/
     schema.ts              # JSON Schema + types
     index.ts               # extractInvoiceDraft
     openai.ts              # OpenAI adapter
+    anthropic.ts           # Anthropic adapter
   airwallex/
     client.ts              # Fetch wrapper + auth token cache
     customers.ts           # Create / reuse
@@ -47,7 +48,11 @@ Fail at process start if required vars are missing. Do not start Bolt.
 - `AIRWALLEX_CLIENT_ID`
 - `AIRWALLEX_API_KEY`
 - `AIRWALLEX_BASE_URL`
-- `OPENAI_API_KEY`
+
+**Required for the selected LLM** (`LLM_PROVIDER`, default `openai`)
+
+- `OPENAI_API_KEY` when `LLM_PROVIDER=openai`
+- `ANTHROPIC_API_KEY` when `LLM_PROVIDER=anthropic`
 
 **Required for a successful Approve** (fail at start so we do not surprise the requester)
 
@@ -60,7 +65,9 @@ Fail at process start if required vars are missing. Do not start Bolt.
 - `AIRWALLEX_LOGIN_AS`
 - `AIRWALLEX_DEFAULT_TAX_PERCENT`
 - `AIRWALLEX_DAYS_UNTIL_DUE` (default `14`)
+- `LLM_PROVIDER` (default `openai`)
 - `OPENAI_MODEL` (default `gpt-4o-mini`)
+- `ANTHROPIC_MODEL` (default `claude-sonnet-4-5`)
 - `EMAIL_ENABLED` (default `false`)
 - `RESEND_API_KEY` / `EMAIL_FROM` (required if email enabled)
 - `AIRWALLEX_SELLER_NAME` (email subject)
@@ -108,6 +115,7 @@ Never log tokens, API keys, or full Authorization headers. `.env` is gitignored.
 
 - `@slack/bolt`
 - `openai`
+- `@anthropic-ai/sdk`
 - `zod` (env + extraction validation)
 - `dotenv`
 - `typescript`, `tsx`, `@types/node` (dev)

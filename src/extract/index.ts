@@ -1,10 +1,10 @@
 import { config } from "../config.js";
 import type { LineItemDraft } from "../types.js";
-import { extractWithOpenAI, type ExtractionInput } from "./openai.js";
-import type { ExtractionResult } from "./schema.js";
+import { extractWithAnthropic } from "./anthropic.js";
+import { extractWithOpenAI } from "./openai.js";
+import type { ExtractionInput, ExtractionResult } from "./schema.js";
 
-export type { ExtractionInput } from "./openai.js";
-export type { ExtractionResult } from "./schema.js";
+export type { ExtractionInput, ExtractionResult } from "./schema.js";
 
 const GENERIC_QUESTION =
   "I still need a bit more to prepare the invoice. Who is the client (tag them), what should I bill, and for how much in which currency?";
@@ -28,7 +28,11 @@ export async function extractInvoiceDraft(
   input: ExtractionInput,
 ): Promise<ValidatedExtraction> {
   const clientKnown = Boolean(input.client);
-  const result = await extractWithOpenAI({
+  const extract =
+    config.llm.provider === "anthropic"
+      ? extractWithAnthropic
+      : extractWithOpenAI;
+  const result = await extract({
     ...input,
     defaultCurrency: input.defaultCurrency ?? config.airwallex.defaultCurrency,
   });

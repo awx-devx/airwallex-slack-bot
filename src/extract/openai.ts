@@ -1,45 +1,35 @@
 import OpenAI from "openai";
 import { config } from "../config.js";
-import type { SlackUserProfile, TranscriptMessage } from "../types.js";
 import {
   EXTRACTION_JSON_SCHEMA,
   SYSTEM_PROMPT,
+  buildUserPrompt,
   extractionResultSchema,
+  type ExtractionInput,
   type ExtractionResult,
 } from "./schema.js";
 
-export type ExtractionInput = {
-  transcript: TranscriptMessage[];
-  requester: SlackUserProfile;
-  client: SlackUserProfile | null;
-  defaultCurrency?: string;
-};
+export type { ExtractionInput } from "./schema.js";
 
-const openai = new OpenAI({ apiKey: config.openai.apiKey });
+let client: OpenAI | undefined;
 
-function buildUserPrompt(input: ExtractionInput): string {
-  const lines = input.transcript.map((message) => {
-    const who = `${message.displayName} (${message.userId}, ${message.role})`;
-    return `${who}: ${message.text}`;
-  });
-
-  return [
-    `Requester: ${input.requester.displayName} (${input.requester.userId})`,
-    input.client
-      ? `Client (from Slack tag): ${input.client.displayName} (${input.client.userId})${input.client.email ? ` email=${input.client.email}` : " (no Slack email)"}`
-      : "Client (from Slack tag): unknown — missing_fields must include client",
-    `defaultCurrency: ${input.defaultCurrency ?? "unset"}`,
-    "",
-    "Transcript:",
-    lines.join("\n") || "(empty)",
-  ].join("\n");
+function getOpenAI(): OpenAI {
+  if (config.llm.provider !== "openai") {
+    throw new Error(
+      `OpenAI adapter called with LLM_PROVIDER=${config.llm.provider}`,
+    );
+  }
+  if (!client) {
+    client = new OpenAI({ apiKey: config.llm.apiKey });
+  }
+  return client;
 }
 
 export async function extractWithOpenAI(
   input: ExtractionInput,
 ): Promise<ExtractionResult> {
-  const completion = await openai.chat.completions.create({
-    model: config.openai.model,
+  const completion = await getOpenAI().chat.completions.create({
+    model: config.llm.model,
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: buildUserPrompt(input) },

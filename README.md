@@ -14,7 +14,7 @@ The product spec in [`docs/`](docs/00-overview.md) is the source of truth.
   - Client ID and API key
   - `legal_entity_id` (`le_…`)
   - `linked_payment_account_id` (`acct_…`)
-- An OpenAI API key (extraction)
+- An OpenAI or Anthropic API key (extraction; set `LLM_PROVIDER`)
 
 Do not invent Airwallex IDs. Copy them from the web app. Open items are listed in [docs/07-decisions.md](docs/07-decisions.md).
 
@@ -22,7 +22,7 @@ Do not invent Airwallex IDs. Copy them from the web app. Open items are listed i
 
 ```bash
 cp .env.example .env
-# fill Slack, Airwallex, and OpenAI values
+# fill Slack, Airwallex, and LLM values (`LLM_PROVIDER=openai` or `anthropic`)
 npm install
 npm run dev
 ```

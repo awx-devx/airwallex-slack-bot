@@ -14,7 +14,7 @@ Regex and keyword rules fail on currency words, ranges, jokes, and multi-message
 
 ## Adapter
 
-Default provider: **OpenAI** (`gpt-4o-mini`) with JSON Schema structured outputs.
+Default provider: **OpenAI** (`gpt-4o-mini`) with JSON Schema structured outputs. Set `LLM_PROVIDER=anthropic` to use Claude (`claude-sonnet-4-5` by default) instead.
 
 The rest of the app depends only on:
 
@@ -22,7 +22,7 @@ The rest of the app depends only on:
 extractInvoiceDraft(input: ExtractionInput): Promise<ExtractionResult>
 ```
 
-Swap the implementation (Gemini, etc.) without changing Slack or Airwallex code.
+`extractInvoiceDraft` dispatches to the OpenAI or Anthropic adapter. Swap or add a provider without changing Slack or Airwallex code.
 
 ## Input
 
@@ -134,7 +134,10 @@ If validation fails, treat as not ready and ask a generic clarifying question if
 
 | Variable | Role |
 | --- | --- |
-| `OPENAI_API_KEY` | Required when using the default adapter |
+| `LLM_PROVIDER` | `openai` (default) or `anthropic` |
+| `OPENAI_API_KEY` | Required when `LLM_PROVIDER=openai` |
 | `OPENAI_MODEL` | Default `gpt-4o-mini` |
+| `ANTHROPIC_API_KEY` | Required when `LLM_PROVIDER=anthropic` |
+| `ANTHROPIC_MODEL` | Default `claude-sonnet-4-5` |
 
-Gemini is not wired in v1. To add it later, implement the same `extractInvoiceDraft` interface.
+Gemini is not wired. To add it later, implement the same adapter interface `extractInvoiceDraft` already dispatches through.

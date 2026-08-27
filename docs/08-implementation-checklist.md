@@ -32,6 +32,7 @@ Status below reflects the v1 codebase in `src/`.
 
 - [x] JSON Schema + Zod validation
 - [x] OpenAI adapter
+- [x] Anthropic adapter (`LLM_PROVIDER=anthropic`)
 - [x] Server-side `ready_for_draft` checks (never infer amount/client/currency)
 
 ## Airwallex
