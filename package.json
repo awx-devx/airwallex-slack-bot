@@ -2,6 +2,8 @@
   "name": "airwallex-slack-bot",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
+  "description": "Reference Slack bot that turns a thread into an Airwallex one-time invoice. Demo, not a product.",
   "type": "module",
   "engines": {
     "node": ">=20"

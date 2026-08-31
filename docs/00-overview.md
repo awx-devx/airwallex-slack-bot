@@ -1,5 +1,7 @@
 # Overview
 
+> **Reference demo.** Not a hosted Slack app, not production-ready, not an official Airwallex or Slack product. Setup: [README.md](../README.md).
+
 A Slack bot that turns a project thread into an Airwallex **one-time invoice**. A teammate tags the bot and the client; the bot reads the thread, asks only for missing fields, posts a Slack draft for approval, and on approve creates and finalizes the invoice. It posts the digital invoice link in the thread. Emailing that link to the client's Slack-profile email is implemented and **disabled** by default.
 
 This document is the product brief. Implementation must follow [01-user-flow](01-user-flow.md) through [08-implementation-checklist](08-implementation-checklist.md).
