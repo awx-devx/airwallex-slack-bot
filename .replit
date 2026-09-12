@@ -1,0 +1,15 @@
+run = "[ -d node_modules ] || npm ci; npx tsx setup/doctor.ts && npm run dev"
+entrypoint = "src/index.ts"
+modules = ["nodejs-20"]
+
+[nix]
+channel = "stable-24_05"
+
+[env]
+LLM_PROVIDER = "openai"
+AIRWALLEX_BASE_URL = "https://api.sandbox.airwallex.com"
+AIRWALLEX_DEFAULT_CURRENCY = "USD"
+EMAIL_ENABLED = "false"
+
+[deployment]
+run = ["sh", "-c", "npm ci && npm run build && npm start"]

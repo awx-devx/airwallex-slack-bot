@@ -1,3 +1,72 @@
+# Airwallex Slack invoicing bot — Replit template
+
+**Press Run.** It installs, checks your secrets, and tells you exactly what is
+missing. Nothing reaches Airwallex until somebody clicks Approve in Slack.
+
+### 1. Slack app
+
+[api.slack.com/apps](https://api.slack.com/apps) → Create New App → From an app
+manifest → paste [`setup/slack-manifest.yaml`](setup/slack-manifest.yaml). Then
+add three Secrets (lock icon, left sidebar):
+
+| Secret | Where in Slack |
+| --- | --- |
+| `SLACK_APP_TOKEN` | Basic Information → App-Level Tokens, scope `connections:write` |
+| `SLACK_SIGNING_SECRET` | Basic Information → Signing Secret |
+| `SLACK_BOT_TOKEN` | OAuth & Permissions → Install to workspace → Bot User OAuth Token |
+
+Then `/invite @Invoice Bot` in the channel you will use.
+
+Socket Mode, so no public URL and nothing to keep awake.
+
+### 2. Airwallex
+
+Add `AIRWALLEX_CLIENT_ID` and `AIRWALLEX_API_KEY` from
+[sandbox.airwallex.com](https://sandbox.airwallex.com) → Account → Developer →
+API keys.
+
+Press Run. The preflight prints the other two for you:
+
+```
+ MISS  AIRWALLEX_LEGAL_ENTITY_ID              not set. Use: le_XXXXXXXXXXXX
+ MISS  AIRWALLEX_LINKED_PAYMENT_ACCOUNT_ID    not set. Use: acct_XXXXXXXXXXXX
+```
+
+Copy both into Secrets. The guide below tells you to find these in the web app;
+`GET /api/v1/account` returns them, so the preflight reads them off your own
+account instead.
+
+### 3. Model
+
+`OPENAI_API_KEY`, or set `LLM_PROVIDER=anthropic` and add `ANTHROPIC_API_KEY`.
+
+### 4. Run again
+
+The preflight passes, then the bot starts. Watch for:
+
+```
+Invoice bot is running as invoice_bot (U0123ABC)
+```
+
+That line is the one that matters. Socket Mode holds an open connection, so the
+process has to stay alive. If output stops at `Ready.`, run `npm run dev` and
+leave it running. Starting it through Agent as a one-off task will not work,
+because the task gets torn down and the bot goes offline with it.
+
+Then, in a thread that has a project and a price:
+`@Invoice Bot send an invoice to @client`
+
+Replies are threaded, so look inside the thread, not the channel.
+
+### What the preflight catches
+
+Ids copied from a different org than `AIRWALLEX_BASE_URL` points at, which
+otherwise appears as a 4xx the moment someone clicks Approve. And it says so
+loudly if you have pointed the base URL at production, where approving creates
+real invoices people can pay.
+
+---
+
 # Airwallex Slack invoicing bot
 
 **This is a reference demo, not a product.** Clone it to see how a Slack thread can become an Airwallex **one-time invoice**. Use it as a starting point for your own integration — it is not production-ready, not a hosted Slack app, and not an official Airwallex or Slack application.
