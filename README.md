@@ -193,7 +193,7 @@ Copy `.env.example` to `.env`. Required vars must be set or the process will not
 | --- | --- | --- |
 | `LLM_PROVIDER` | `openai` | `openai` or `anthropic` |
 | `OPENAI_MODEL` | `gpt-4o-mini` | Extraction model |
-| `ANTHROPIC_MODEL` | `claude-sonnet-4-5` | Extraction model |
+| `ANTHROPIC_MODEL` | `claude-sonnet-5-5` | Extraction model |
 | `AIRWALLEX_DEFAULT_TAX_PERCENT` | unset | Omit to send no tax field |
 | `AIRWALLEX_DAYS_UNTIL_DUE` | `14` | Invoice due date |
 | `AIRWALLEX_LOGIN_AS` | unset | Only if the API key is multi-account |

@@ -150,7 +150,7 @@ function parseLlm(
     return {
       provider: "anthropic",
       apiKey,
-      model: env.ANTHROPIC_MODEL?.trim() || "claude-sonnet-4-5",
+      model: env.ANTHROPIC_MODEL?.trim() || "claude-sonnet-5-5",
     };
   }
 

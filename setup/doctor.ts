@@ -169,8 +169,8 @@ function checkLlm() {
   if (provider === "anthropic") {
     checkPresent("ANTHROPIC_API_KEY", "console.anthropic.com");
     const model = env("ANTHROPIC_MODEL");
-    if (model && /claude-(3|sonnet-4-5|opus-4)/.test(model)) {
-      report("warn", "ANTHROPIC_MODEL", `${model} is an older model. claude-sonnet-5 is current.`);
+    if (model && !/^claude-sonnet-5-5$/.test(model)) {
+      report("warn", "ANTHROPIC_MODEL", `${model} is not the current default. claude-sonnet-5-5 is current.`);
     }
   } else if (provider === "openai") {
     checkPresent("OPENAI_API_KEY", "platform.openai.com");

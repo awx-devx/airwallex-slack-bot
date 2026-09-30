@@ -67,7 +67,7 @@ Fail at process start if required vars are missing. Do not start Bolt.
 - `AIRWALLEX_DAYS_UNTIL_DUE` (default `14`)
 - `LLM_PROVIDER` (default `openai`)
 - `OPENAI_MODEL` (default `gpt-4o-mini`)
-- `ANTHROPIC_MODEL` (default `claude-sonnet-4-5`)
+- `ANTHROPIC_MODEL` (default `claude-sonnet-5-5`)
 - `EMAIL_ENABLED` (default `false`)
 - `RESEND_API_KEY` / `EMAIL_FROM` (required if email enabled)
 - `AIRWALLEX_SELLER_NAME` (email subject)
