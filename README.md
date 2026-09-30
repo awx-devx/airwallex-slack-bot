@@ -104,7 +104,7 @@ Open items that stay in env (never hardcoded) are listed in [docs/07-decisions.m
 ## Quickstart
 
 ```bash
-git clone https://github.com/HeimLabs/airwallex-slack-bot.git
+git clone https://github.com/awx-devx/airwallex-slack-bot.git
 cd airwallex-slack-bot
 cp .env.example .env
 # fill Slack, Airwallex, and LLM values (see table below)
